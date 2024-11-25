@@ -1,6 +1,0 @@
-flask
-flask-restful
-sqlalchemy
-PyPDF2
-openai
-python-dotenv
