@@ -16,7 +16,7 @@ class UploadResume(Resource):
             content = extract_text_from_pdf(file)
 
             # Analisa o currículo com a IA
-            feedback = analyze_resume(content, area)
+            feedback = analyze_resume(content)
 
             # Salva no banco de dados
             resume = Resume(name=file.filename, content=content, feedback=json.dumps(feedback))

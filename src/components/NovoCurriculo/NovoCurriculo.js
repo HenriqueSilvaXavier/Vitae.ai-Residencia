@@ -14,9 +14,10 @@ const NovoCurriculo = () => {
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [showErrorNotification, setShowErrorNotification] = useState(false);
   const [showPdfImage, setShowPdfImage] = useState(false);
-  const [fileUrl, setFileUrl] = useState(null); // Estado para armazenar o URL do PDF
+  const [fileUrl, setFileUrl] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [isGenerateVisible, setIsGenerateVisible] = useState(false);
+
   const uploadResume = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -37,7 +38,6 @@ const NovoCurriculo = () => {
         setShowErrorNotification(false);
         setIsButtonVisible(true);
 
-        // Gerar URL do arquivo PDF para visualização
         const fileURL = URL.createObjectURL(file);
         setFileUrl(fileURL);
       } else {
@@ -75,12 +75,12 @@ const NovoCurriculo = () => {
   };
 
   const handleNextClick = () => {
-    setShowPdfImage(true);  // Exibe a imagem do PDF
+    setShowPdfImage(true);
     setIsGenerateVisible(true);
   };
 
   const handleGenerateClick = () => {
-    setShowPdfImage(false);  // Exibe a imagem do PDF
+    setShowPdfImage(false);
     setIsGenerateVisible(false);
     setShowSuccessNotification(false);
     setShowErrorNotification(false);
@@ -89,6 +89,23 @@ const NovoCurriculo = () => {
     setFeedback(null);
     setIsButtonVisible(false);
   };
+
+  const formatFeedbackText = (text) => {
+    return text
+      .replace(/"/g, '')
+      .split('\n')
+      .slice(1, -1)
+      .map((item, index) => {
+        const [topic, description] = item.split(':');
+        const isDetail = topic.includes('_detail');
+        return (
+          <span key={index}>
+            <strong style={{ color: isDetail ? "inherit" : "#7a3afc" }}>{topic}</strong>: {description}
+            <br />
+          </span>
+        );
+      });
+  };  
 
   return (
     <div style={{ margin: '20px', width: '70%' }}>
@@ -125,7 +142,6 @@ const NovoCurriculo = () => {
         <p style={{ color: 'white' }}>Siga o passo a passo para otimizar o seu currículo</p>
       </div>
 
-      {/* Contêiner flex para alinhar lado a lado */}
       {!showPdfImage && (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div className="uploadContainer" style={{ width: '57%', margin: 'auto' }}>
@@ -153,7 +169,6 @@ const NovoCurriculo = () => {
         </div>
       )}
 
-      {/* Mostrar o PDF em uma visualização quando clicado no "Próximo" */}
       {showPdfImage && fileUrl && (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <embed src={fileUrl} type="application/pdf" width="39%" height="450px" style={{ marginRight: '20px' }} />
@@ -161,42 +176,19 @@ const NovoCurriculo = () => {
           <div className={styles.feedback} style={{ width: '48%' }}>
             {typeof feedback === "object" ? (
               <ul>
-              {Object.entries(feedback).map(([key, value]) => {
-                if (key === "estrutura_valida") {
-                  return (
-                    <li key={key}>
-                      <strong>Estrutura válida:</strong> {value === false ? "false" : value}
-                    </li>
-
-                  );
-                } else if (key === "dicas_melhoria") {
-                  return (
-                    <li key={key}>
-                      <strong>Dicas de melhoria:</strong> {typeof value === "object" ? JSON.stringify(value) : value}
-                    </li>
-                  );
-                } else if (key === "habilidades_tecnicas") {
-                  return (
-                    <li key={key}>
-                      <strong>Habilidades técnicas:</strong> {typeof value === "object" ? JSON.stringify(value) : value}
-                    </li>
-                  );
-                } else if (key === "areas_experiencia") {
-                  return (
-                    <li key={key}>
-                      <strong>Áreas de experiência:</strong> {typeof value === "object" ? JSON.stringify(value) : value}
-                    </li>
-                  );
-                }
-                return null; // Caso a chave não corresponda a nenhuma das condições
-              })}
-            </ul>            
+                {Object.entries(feedback).map(([key, value], index) => (
+                  <li key={index}>
+                    <strong style={{ color: "purple" }}>{key}:</strong> {JSON.stringify(value)}
+                  </li>
+                ))}
+              </ul>
             ) : (
-              <p>{feedback}</p>
+              <p>{formatFeedbackText(feedback)}</p>
             )}
           </div>
         </div>
       )}
+
       {isGenerateVisible && (
         <div className={styles.main_container_proximo_btn}>
           <button className={styles.proximo_btn} onClick={handleGenerateClick}>Gerar novamente</button>
