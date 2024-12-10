@@ -79,6 +79,7 @@
     overflow-y: scroll;
     width: 450px;
     height: 600px;
+    padding-right: 13px;
   }
   .feedback ul{
     flex-direction: column;
@@ -87,4 +88,12 @@
   }
   .responseContainer{
     flex-direction: row;
+  }
+  .paragraph{
+    text-align: justify;
+  }
+  .CaretIcon {
+   position: relative;
+   top: 4px;
+   margin-right: 0px;
   }
